@@ -1,0 +1,39 @@
+---
+name: 02 Azure Landing Zones Continuous Delivery
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      skip_what_if:
+        description: 'Skip What If Check?'
+        default: false
+        type: boolean
+      management_groups:
+        description: 'Run Steps: Management Groups'
+        type: boolean
+        default: true
+      resource_groups:
+        description: 'Run Steps: Resource Groups'
+        type: boolean
+        default: true
+      destroy:
+        description: '[DANGER!] Destroy? [DANGER!]'
+        default: false
+        type: boolean
+
+jobs:
+  plan_and_apply:
+    uses: microsoft-azure-landing-zones-cd-tests/alz-r52510r569-templates/.github/workflows/cd-template.yaml@main
+    name: 'CD'
+    permissions:
+      id-token: write
+      contents: read
+    with:
+      skip_what_if: ${{ inputs.skip_what_if }}
+      destroy: ${{ inputs.destroy }}
+      management_groups: ${{ inputs.management_groups }}
+      management_resource_group: ${{ inputs.resource_groups }}
+      connectivity_resource_group: ${{ inputs.resource_groups }}
+      identity_resource_group: ${{ inputs.resource_groups }}
